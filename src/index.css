@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply font-poppins;
+  @apply h-screen
+ 
+}
+@layer components {
+  .card {
+    margin: 20px;
+  }
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+#root{
+  background:linear-gradient(-45deg,#eefffe,#effaff,#ddf5ff);
+  @apply h-screen
+}
+.btn {
+  @apply rounded-full;
+}
