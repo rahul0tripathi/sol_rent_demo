@@ -1,24 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 body {
   @apply font-poppins;
-  @apply h-screen
- 
+  @apply h-screen;
 }
 @layer components {
   .card {
     margin: 20px;
   }
+  .npm {
+    margin: 5px;
+    border-radius: 0px !important;
+    background-color: #df272d !important;
+    color: white;
+    border: 0px;
+  }
 }
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-#root{
-  background:linear-gradient(-45deg,#eefffe,#effaff,#ddf5ff);
-  @apply h-screen
+#root {
+  background: linear-gradient(-45deg, #eefffe, #effaff, #ddf5ff);
+  @apply h-screen;
 }
 .btn {
   @apply rounded-full;

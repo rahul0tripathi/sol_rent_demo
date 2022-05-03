@@ -16,6 +16,15 @@ function Navbar() {
         </p>
       </div>
       <div className="navbar-end">
+        <button
+          className="btn npm"
+          onClick={(e) => {
+            e.preventDefault();
+            window.open("https://www.npmjs.com/package/sol-rent");
+          }}
+        >
+          View SDK
+        </button>
         <Wallet></Wallet>
       </div>
     </div>
