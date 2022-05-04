@@ -4,24 +4,17 @@ import {
   useWallet,
   WalletContextState,
 } from "@solana/wallet-adapter-react";
-import {
-  Connection,
-  Keypair,
-  PublicKey,
-  LAMPORTS_PER_SOL,
-} from "@solana/web3.js";
-import BN from "bn.js";
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { BN } from "bn.js";
 import React, { useEffect, useState } from "react";
 import {
   queryTokenState,
   config,
-  EscrowState,
-  initNFTEscrowTx,
   findAssociatedTokenAddress,
   sendTransaction,
-  cancelEscrowTx,
+  withdrawTx,
+  rentTx,
 } from "sol-rent";
-import { addDocument } from "../services/firebase";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
     programId: config.DEVNET_PROGRAM_ID,
@@ -29,42 +22,21 @@ const getMetadata = async (connection: Connection, token: string) => {
     connection,
   });
 };
-const initalizeEscrowHandler = async (
-  rate: number,
+const rentInit = async (
   connection: Connection,
   token: PublicKey,
-  wallet: WalletContextState
+  wallet: WalletContextState,
+  amount: number,
+  time: number
 ) => {
-  const tempAccount = new Keypair();
-  const resp = await initNFTEscrowTx({
-    owner: wallet,
-    token,
-    rent: new BN(rate * LAMPORTS_PER_SOL),
-    connection,
-    newAccount: tempAccount.publicKey,
-    ownerTokenAccount: await findAssociatedTokenAddress(
-      wallet.publicKey,
-      token
-    ),
-    programId: config.DEVNET_PROGRAM_ID,
-  });
-  const txId = await wallet.sendTransaction(resp.tx, connection, {
-    signers: [tempAccount],
-    options: { skipPreflight: false, preflightCommitment: "confirmed" },
-  });
-  return `initEscrowTx Completed: ${txId}`;
-};
-const cancelEscrowHandler = async (
-  connection: Connection,
-  token: PublicKey,
-  wallet: WalletContextState
-) => {
-  const resp = await cancelEscrowTx({
-    owner: wallet,
+  const resp = await rentTx({
+    rentee: wallet,
     token,
     programId: config.DEVNET_PROGRAM_ID,
+    amount: new BN(amount),
+    time: new BN(time),
     connection,
-    ownerTokenAddress: await findAssociatedTokenAddress(
+    renteeTokenAddress: await findAssociatedTokenAddress(
       wallet.publicKey,
       token
     ),
@@ -76,64 +48,56 @@ const cancelEscrowHandler = async (
     signers: [],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
   });
-  await addDocument(token.toBase58());
+  return `rentTx Completed: ${txId}`;
+};
+const cancelRent = async (
+  connection: Connection,
+  token: PublicKey,
+  wallet: WalletContextState
+) => {
+  const resp = await withdrawTx({
+    token,
+    programId: config.DEVNET_PROGRAM_ID,
+    connection,
+  });
+  const txId = await sendTransaction({
+    connection,
+    wallet,
+    txs: resp.tx,
+    signers: [],
+    options: { skipPreflight: false, preflightCommitment: "confirmed" },
+  });
   return `cancelEscrowTx Completed: ${txId}`;
 };
-function Card() {
+function Rent() {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
   const [token, setToken] = useState(null);
   const [err, setErr] = useState(null);
   const [log, setLog] = useState(null);
-  const [escrowState, setEscrowState] = useState(null);
-  const [rate, setRate] = useState(0);
-  const fetchMetadata = async () => {
+  const [bill, setBill] = useState(0);
+  const [time, setTime] = useState(0);
+  const initRent = async () => {
     setErr(null);
     setLog(null);
-    setEscrowState(null);
-    if (!publicKey) {
-      setErr("Wallet not connected");
-      return;
-    }
-    if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
     try {
-      const state = await getMetadata(connection, token);
-      await addDocument(token);
-      setEscrowState(
-        JSON.stringify(
-          {
-            ...state.getState(),
-            rate: `${state.getState().rate.toNumber() / LAMPORTS_PER_SOL} SOL`,
-            expiry: state.getState().expiry.toString(),
-            state: state.getState().state.toString(),
-          },
-          null,
-          2
-        )
+      const currentState = await getMetadata(connection, token);
+      const amount = new BN(
+        (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
+          parseInt(time) *
+          LAMPORTS_PER_SOL
       );
-    } catch (error) {
-      console.log(error);
-      setErr(error.message);
-    }
-  };
-  const initalizeEscrow = async () => {
-    setErr(null);
-    setLog(null);
-    setEscrowState(null);
-    if (!publicKey) {
-      setErr("Wallet not connected");
-      return;
-    }
-    if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
-    try {
-      const resp = await initalizeEscrowHandler(
-        rate,
+      console.log(amount.toNumber());
+
+      const BNtime = new BN(time);
+      console.log(BNtime.toNumber());
+      const resp = await rentInit(
         connection,
         new PublicKey(token),
-        w
+        w,
+        amount,
+        BNtime
       );
       setLog(resp);
     } catch (error) {
@@ -141,10 +105,22 @@ function Card() {
       setErr(error.message);
     }
   };
-  const cancelEscrow = async () => {
+  const calculateRent = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setBill(0);
+      setTime(parseInt(e.target.value));
+      const currentState = await getMetadata(connection, token);
+      setBill(
+        (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
+          parseInt(e.target.value)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const cancel = async () => {
     setErr(null);
     setLog(null);
-    setEscrowState(null);
     if (!publicKey) {
       setErr("Wallet not connected");
       return;
@@ -152,11 +128,7 @@ function Card() {
     if (!token) setErr("no token found");
     console.log(publicKey.toBase58());
     try {
-      const resp = await cancelEscrowHandler(
-        connection,
-        new PublicKey(token),
-        w
-      );
+      const resp = await cancelRent(connection, new PublicKey(token), w);
       setLog(resp);
     } catch (error) {
       console.log(error);
@@ -169,9 +141,9 @@ function Card() {
   return (
     <div className="container mx-auto center">
       <div className="flex">
-        <div className="flex-auto card w-96 max-w-1/2 bg-primary text-primary-content shadow-2xl">
+        <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
           <div className="card-body">
-            <h2 className="card-title">initialize SPL-TOKEN</h2>
+            <h2 className="card-title">rent SPL-TOKEN</h2>
             <div className="flex gap-4">
               <input
                 type="text"
@@ -180,21 +152,21 @@ function Card() {
                 className=" flex-auto input input-bordered input-accent "
               />
               <input
-                type="text"
-                placeholder="Rate (in SOL/sec)"
+                type="number"
+                onChange={(e) => {
+                  //setTime(parseInt(e.target.value));
+                  calculateRent(e);
+                }}
+                placeholder="Duration (seconds)"
                 className=" flex-auto input input-bordered input-accent  max-w-xs s"
-                onChange={(e) => setRate(parseFloat(e.target.value))}
               />
             </div>
             <div className="justify-end card-actions">
-              <button className="btn" onClick={initalizeEscrow}>
-                Initialize Token Listing
+              <button className="btn" onClick={initRent}>
+                Rent It for {bill} SOL!!!
               </button>
-              <button className="btn" onClick={fetchMetadata}>
-                Rented Token Status
-              </button>
-              <button className="btn" onClick={cancelEscrow}>
-                Withdraw Token Listing
+              <button className="btn" onClick={cancel}>
+                cancel rent
               </button>
             </div>
             {err ? (
@@ -221,22 +193,6 @@ function Card() {
             )}
           </div>
         </div>
-        {escrowState ? (
-          <div className="flex-auto card w-96 bg-primary text-primary-content">
-            <div className="card-body">
-              <h2 className="card-title">RENTED NFT METADATA</h2>
-              <p>
-                <div className="mockup-code">
-                  <pre data-prefix="$">
-                    <code>{escrowState}</code>
-                  </pre>
-                </div>
-              </p>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
       {log ? (
         <div className="alert alert-info shadow-lg">
@@ -264,4 +220,4 @@ function Card() {
   );
 }
 
-export default Card;
+export default Rent;

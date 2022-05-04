@@ -1,4 +1,4 @@
-import React, { useEffect,useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Navbar from "./components/navbar";
@@ -24,10 +24,12 @@ import {
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
+import Rent from "./components/rent";
+import Listing from "./components/listings";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 function App() {
-  const network = WalletAdapterNetwork.Testnet;
+  const network = WalletAdapterNetwork.Devnet;
 
   // You can also provide a custom RPC endpoint.
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
@@ -52,6 +54,8 @@ function App() {
           <div className="flex flex-col items-center ">
             <Navbar></Navbar>
             <Card />
+            <Rent />
+            <Listing />
           </div>
         </WalletModalProvider>
       </WalletProvider>
