@@ -14,7 +14,7 @@ import {
   sendTransaction,
   withdrawTx,
   rentTx,
-} from "sol-rent";
+} from "stream-nft-sdk";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
     programId: config.DEVNET_PROGRAM_ID,
@@ -30,16 +30,12 @@ const rentInit = async (
   time: number
 ) => {
   const resp = await rentTx({
-    rentee: wallet,
+    borrower: wallet,
     token,
     programId: config.DEVNET_PROGRAM_ID,
     amount: new BN(amount),
     time: new BN(time),
-    connection,
-    renteeTokenAddress: await findAssociatedTokenAddress(
-      wallet.publicKey,
-      token
-    ),
+    connection
   });
   const txId = await sendTransaction({
     connection,
@@ -67,7 +63,7 @@ const cancelRent = async (
     signers: [],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
   });
-  return `cancelEscrowTx Completed: ${txId}`;
+  return `withdrawEscrowTx Completed: ${txId}`;
 };
 function Rent() {
   const { connection } = useConnection();
@@ -143,7 +139,7 @@ function Rent() {
       <div className="flex">
         <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
           <div className="card-body">
-            <h2 className="card-title">rent SPL-TOKEN</h2>
+            <h2 className="card-title">borrow SPL-TOKEN</h2>
             <div className="flex gap-4">
               <input
                 type="text"
@@ -163,10 +159,10 @@ function Rent() {
             </div>
             <div className="justify-end card-actions">
               <button className="btn" onClick={initRent}>
-                Rent It for {bill} SOL!!!
+                borrow It for {bill} SOL!!!
               </button>
               <button className="btn" onClick={cancel}>
-                cancel rent
+                withdraw borrowed nft
               </button>
             </div>
             {err ? (

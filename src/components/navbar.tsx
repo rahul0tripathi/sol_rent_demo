@@ -12,7 +12,7 @@ function Navbar() {
       <div className="navbar-start"></div>
       <div className="navbar-center">
         <p className=" normal-case text-xl font-poppins text-black">
-          SOL RENT DEMO
+          STREAM NFT DEMO
         </p>
       </div>
       <div className="navbar-end">
@@ -20,7 +20,7 @@ function Navbar() {
           className="btn npm"
           onClick={(e) => {
             e.preventDefault();
-            window.open("https://www.npmjs.com/package/sol-rent");
+            window.open("https://www.npmjs.com/package/stream-nft-sdk");
           }}
         >
           View SDK

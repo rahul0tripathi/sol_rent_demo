@@ -15,12 +15,11 @@ import React, { useEffect, useState } from "react";
 import {
   queryTokenState,
   config,
-  EscrowState,
   initNFTEscrowTx,
   findAssociatedTokenAddress,
   sendTransaction,
   cancelEscrowTx,
-} from "sol-rent";
+} from "stream-nft-sdk";
 import { addDocument } from "../services/firebase";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
@@ -52,6 +51,7 @@ const initalizeEscrowHandler = async (
     signers: [tempAccount],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
   });
+  await addDocument(token.toBase58());
   return `initEscrowTx Completed: ${txId}`;
 };
 const cancelEscrowHandler = async (
@@ -76,7 +76,6 @@ const cancelEscrowHandler = async (
     signers: [],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
   });
-  await addDocument(token.toBase58());
   return `cancelEscrowTx Completed: ${txId}`;
 };
 function Card() {
@@ -194,7 +193,7 @@ function Card() {
                 Rented Token Status
               </button>
               <button className="btn" onClick={cancelEscrow}>
-                Withdraw Token Listing
+                Cancel Token Listing
               </button>
             </div>
             {err ? (

@@ -9,12 +9,7 @@ import React, { useEffect, useState } from "react";
 import {
   queryTokenState,
   config,
-  EscrowState,
-  initNFTEscrowTx,
-  findAssociatedTokenAddress,
-  sendTransaction,
-  cancelEscrowTx,
-} from "sol-rent";
+} from "stream-nft-sdk";
 import { deleteListing, fetchListings } from "../services/firebase";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
