@@ -23,6 +23,7 @@ import {
   cancelEscrowTx,
 } from "stream-nft-sdk";
 import { addDocument } from "../services/firebase";
+import { getRate, getSeconds } from "../services/common";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
     programId: config.DEVNET_PROGRAM_ID,
@@ -93,25 +94,11 @@ function Card() {
   const [err, setErr] = useState(null);
   const [log, setLog] = useState(null);
   const [escrowState, setEscrowState] = useState(null);
-  const [rate, setRate] = useState(0.001);
+  const [rate, setRate] = useState(0);
   const [timeScale, setTimeScale] = useState(0);
   const [minDuration, setMinDuration] = useState(60);
   const [maxDuration, setMaxDuration] = useState(10 * 60);
-  const getRate = () => {
-    switch (timeScale) {
-      case 1:
-        //minutes
-        return rate / 60;
-      case 2:
-        //hours
-        return rate / 3600;
-      case 3:
-        //days
-        return rate / 86400;
-      default:
-        return rate;
-    }
-  };
+
   const fetchMetadata = async () => {
     setErr(null);
     setLog(null);
@@ -156,12 +143,12 @@ function Card() {
     console.log(publicKey.toBase58());
     try {
       const resp = await initalizeEscrowHandler(
-        getRate(),
+        getRate(timeScale, rate),
         connection,
         new PublicKey(token),
         w,
-        minDuration,
-        maxDuration
+        getSeconds(timeScale, minDuration),
+        getSeconds(timeScale, maxDuration)
       );
       setLog(resp);
     } catch (error) {
@@ -210,18 +197,27 @@ function Card() {
             </div>
 
             <div className="form-control flex flex-row gap-4 w-full ">
-              <label className="label">
-                <span className="label-text">Rate</span>
-              </label>
               <input
-                type="text"
-                defaultValue={0.001}
+                type="number"
                 placeholder="Rate"
                 className=" flex-auto input input-bordered input-accent "
                 onChange={(e) => setRate(parseFloat(e.target.value))}
               />
+
+              <input
+                type="number"
+                placeholder="Minimum Rent Duration"
+                className=" flex-auto input input-bordered input-accent w-full "
+                onChange={(e) => setMinDuration(parseInt(e.target.value))}
+              />
+              <input
+                type="number"
+                placeholder="Maximum Rent Duration"
+                className=" flex-auto input input-bordered input-accent w-full "
+                onChange={(e) => setMaxDuration(parseInt(e.target.value))}
+              />
               <label className="label">
-                <span className="label-text">scale</span>
+                <span className="label-text">Unit</span>
               </label>
               <select
                 className="select select-info  "
@@ -229,41 +225,25 @@ function Card() {
                   setTimeScale(parseInt(e.target.value));
                 }}
               >
-                <option value={0} defaultChecked={true}>
-                  SOL/Second
+                <option value={0}>Seconds</option>
+                <option value={1} defaultValue={true}>
+                  Minutes
                 </option>
-                <option value={1}>SOL/Minutes</option>
-                <option value={2}>SOl/Hours</option>
-                <option value={3}>SOL/Days</option>
+                <option value={2}>Hours</option>
+                <option value={3}>Days</option>
+                <option value={4}>Weeks</option>
+                <option value={5}>Months</option>
               </select>
-              <label className="label">
-                <span className="label-text">Minimum Rent Duration</span>
-              </label>
-              <TimeDurationInput
-                type="text"
-                value={60 * 1000}
-                className=" flex-auto input input-bordered input-accent w-full "
-                onChange={(value) => setMinDuration(value / 1000)}
-              />
-              <label className="label">
-                <span className="label-text">Minimum Rent Duration</span>
-              </label>
-              <TimeDurationInput
-                type="text"
-                value={10 * 60 * 1000}
-                className=" flex-auto input input-bordered input-accent w-full "
-                onChange={(value) => setMaxDuration(value / 1000)}
-              />
             </div>
             <div className="justify-end card-actions">
               <button className="btn" onClick={initalizeEscrow}>
                 Initialize Token Listing
               </button>
               <button className="btn" onClick={fetchMetadata}>
-                Rented Token Status
+                Listed Token Status
               </button>
               <button className="btn" onClick={cancelEscrow}>
-                Cancel Token Listing
+                Withdraw Token Listing
               </button>
             </div>
             {err ? (

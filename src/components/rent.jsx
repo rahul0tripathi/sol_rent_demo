@@ -1,5 +1,3 @@
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
-import { TimeDurationInput } from "react-time-duration-input";
 import {
   useConnection,
   useWallet,
@@ -11,11 +9,11 @@ import React, { useEffect, useState } from "react";
 import {
   queryTokenState,
   config,
-  findAssociatedTokenAddress,
   sendTransaction,
   withdrawTx,
   rentTx,
 } from "stream-nft-sdk";
+import { getSeconds } from "../services/common";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
     programId: config.DEVNET_PROGRAM_ID,
@@ -36,7 +34,7 @@ const rentInit = async (
     programId: config.DEVNET_PROGRAM_ID,
     amount: new BN(amount),
     time: new BN(time),
-    connection
+    connection,
   });
   const txId = await sendTransaction({
     connection,
@@ -75,11 +73,13 @@ function Rent() {
   const [log, setLog] = useState(null);
   const [bill, setBill] = useState(0);
   const [time, setTime] = useState(0);
+  const [timeScale, setScale] = useState(0);
   const initRent = async () => {
     setErr(null);
     setLog(null);
     try {
       const currentState = await getMetadata(connection, token);
+      console.log(parseInt(time));
       const amount = new BN(
         (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
           parseInt(time) *
@@ -102,15 +102,15 @@ function Rent() {
       setErr(error.message);
     }
   };
-  const calculateRent = async (e: number) => {
+  const calculateRent = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      console.log(e)
+      console.log(e.target.value);
       setBill(0);
-      setTime(e/1000);
+      setTime(getSeconds(timeScale, e.target.value));
       const currentState = await getMetadata(connection, token);
       setBill(
         (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
-          (e/1000)
+          getSeconds(timeScale, e.target.value)
       );
     } catch (error) {
       console.log(error);
@@ -149,22 +149,40 @@ function Rent() {
                 placeholder="Token address"
                 className=" flex-auto input input-bordered input-accent "
               />
-              <TimeDurationInput
-              value = {60*1000}
-                onChange={(e ) => {
+              <input
+                type="number"
+                onChange={(e) => {
                   //setTime(parseInt(e.target.value));
                   calculateRent(e);
                 }}
-                placeholder="Duration (seconds)"
+                placeholder="Duration"
                 className=" flex-auto input input-bordered input-accent  max-w-xs s"
               />
+              <label className="label">
+                <span className="label-text">Unit</span>
+              </label>
+              <select
+                className="select select-info  "
+                onChange={(e) => {
+                  setScale(parseInt(e.target.value));
+                }}
+              >
+                <option value={0}>Seconds</option>
+                <option value={1} defaultValue={true}>
+                  Minutes
+                </option>
+                <option value={2}>Hours</option>
+                <option value={3}>Days</option>
+                <option value={4}>Weeks</option>
+                <option value={5}>Months</option>
+              </select>
             </div>
             <div className="justify-end card-actions">
               <button className="btn" onClick={initRent}>
                 borrow It for {bill} SOL!!!
               </button>
               <button className="btn" onClick={cancel}>
-                withdraw borrowed nft
+                return borrowed nft
               </button>
             </div>
             {err ? (
