@@ -26,6 +26,7 @@ import {
 import { clusterApiUrl } from "@solana/web3.js";
 import Rent from "./components/rent";
 import Listing from "./components/listings";
+import Toggle from "./components/borrow";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 function App() {
@@ -47,15 +48,33 @@ function App() {
     ],
     [network]
   );
+  //states
+  const [listActive, setListActive] = React.useState(true);
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <div className="flex flex-col items-center ">
             <Navbar></Navbar>
-            <Card />
-            <Rent />
-            <Listing />
+            <div className="tabs tabs-boxed">
+              <a
+                className={`tab tab-lg ${listActive ? "tab-active" : ""}`}
+                onClick={() => {
+                  setListActive(!listActive);
+                }}
+              >
+                List
+              </a>
+              <a
+                className={`tab tab-lg ${listActive ? "" : "tab-active"}`}
+                onClick={() => {
+                  setListActive(!listActive);
+                }}
+              >
+                Borrow
+              </a>
+            </div>
+            {listActive ? <Card /> : <Toggle></Toggle>}
           </div>
         </WalletModalProvider>
       </WalletProvider>

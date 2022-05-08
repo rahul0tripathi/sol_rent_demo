@@ -6,10 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
-import {
-  queryTokenState,
-  config,
-} from "stream-nft-sdk";
+import { queryTokenState, config } from "stream-nft-sdk";
 import { deleteListing, fetchListings } from "../services/firebase";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
@@ -22,22 +19,22 @@ function Listing() {
   const { connection } = useConnection();
   const [ids, setids] = useState([]);
   const init = async () => {
-    setids([]);
+    console.log("called");
+
     const listings = await fetchListings();
-    console.log(listings);
+    setids([]);
     listings.forEach(async (listing) => {
       try {
         const state = await getMetadata(connection, listing.token);
-        console.log(state);
-        setids((ids) => [...ids, listing.token]);
+        setids((ids) => [...new Set([...ids, listing.token])]);
       } catch (e) {
         await deleteListing(listing.token);
       }
     });
   };
   useEffect(() => {
-   // init();
-  }, [connection]);
+    init();
+  }, []);
   return (
     <div className="container mx-auto center">
       <div className="flex">

@@ -1,4 +1,6 @@
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import { TimeDurationInput } from "react-time-duration-input";
+
 import {
   useConnection,
   useWallet,
@@ -32,13 +34,18 @@ const initalizeEscrowHandler = async (
   rate: number,
   connection: Connection,
   token: PublicKey,
-  wallet: WalletContextState
+  wallet: WalletContextState,
+  minBorrowTime: number,
+  maxBorrowTime: number
 ) => {
+  console.log(minBorrowTime, maxBorrowTime, rate);
   const tempAccount = new Keypair();
   const resp = await initNFTEscrowTx({
     owner: wallet,
     token,
-    rent: new BN(rate * LAMPORTS_PER_SOL),
+    rate: new BN(rate * LAMPORTS_PER_SOL),
+    minBorrowTime: new BN(minBorrowTime),
+    maxBorrowTime: new BN(maxBorrowTime),
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -86,7 +93,25 @@ function Card() {
   const [err, setErr] = useState(null);
   const [log, setLog] = useState(null);
   const [escrowState, setEscrowState] = useState(null);
-  const [rate, setRate] = useState(0);
+  const [rate, setRate] = useState(0.001);
+  const [timeScale, setTimeScale] = useState(0);
+  const [minDuration, setMinDuration] = useState(60);
+  const [maxDuration, setMaxDuration] = useState(10 * 60);
+  const getRate = () => {
+    switch (timeScale) {
+      case 1:
+        //minutes
+        return rate / 60;
+      case 2:
+        //hours
+        return rate / 3600;
+      case 3:
+        //days
+        return rate / 86400;
+      default:
+        return rate;
+    }
+  };
   const fetchMetadata = async () => {
     setErr(null);
     setLog(null);
@@ -107,6 +132,8 @@ function Card() {
             rate: `${state.getState().rate.toNumber() / LAMPORTS_PER_SOL} SOL`,
             expiry: state.getState().expiry.toString(),
             state: state.getState().state.toString(),
+            minBorrowDuration: state.getState().minBorrowDuration.toString(),
+            maxBorrowDuration: state.getState().maxBorrowDuration.toString(),
           },
           null,
           2
@@ -129,10 +156,12 @@ function Card() {
     console.log(publicKey.toBase58());
     try {
       const resp = await initalizeEscrowHandler(
-        rate,
+        getRate(),
         connection,
         new PublicKey(token),
-        w
+        w,
+        minDuration,
+        maxDuration
       );
       setLog(resp);
     } catch (error) {
@@ -166,23 +195,64 @@ function Card() {
     setErr(null);
   }, []);
   return (
-    <div className="container mx-auto center">
+    <div className="container mx-auto center ">
       <div className="flex">
-        <div className="flex-auto card w-96 max-w-1/2 bg-primary text-primary-content shadow-2xl">
+        <div className="flex-auto card w-32 max-w-32 bg-primary text-primary-content shadow-2xl">
           <div className="card-body">
             <h2 className="card-title">initialize SPL-TOKEN</h2>
-            <div className="flex gap-4">
+            <div className="flex gap-4 ">
               <input
                 type="text"
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="Token address"
-                className=" flex-auto input input-bordered input-accent "
+                className=" flex-auto input input-bordered input-accent"
               />
+            </div>
+
+            <div className="form-control flex flex-row gap-4 w-full ">
+              <label className="label">
+                <span className="label-text">Rate</span>
+              </label>
               <input
                 type="text"
-                placeholder="Rate (in SOL/sec)"
-                className=" flex-auto input input-bordered input-accent  max-w-xs s"
+                defaultValue={0.001}
+                placeholder="Rate"
+                className=" flex-auto input input-bordered input-accent "
                 onChange={(e) => setRate(parseFloat(e.target.value))}
+              />
+              <label className="label">
+                <span className="label-text">scale</span>
+              </label>
+              <select
+                className="select select-info  "
+                onChange={(e) => {
+                  setTimeScale(parseInt(e.target.value));
+                }}
+              >
+                <option value={0} defaultChecked={true}>
+                  SOL/Second
+                </option>
+                <option value={1}>SOL/Minutes</option>
+                <option value={2}>SOl/Hours</option>
+                <option value={3}>SOL/Days</option>
+              </select>
+              <label className="label">
+                <span className="label-text">Minimum Rent Duration</span>
+              </label>
+              <TimeDurationInput
+                type="text"
+                value={60 * 1000}
+                className=" flex-auto input input-bordered input-accent w-full "
+                onChange={(value) => setMinDuration(value / 1000)}
+              />
+              <label className="label">
+                <span className="label-text">Minimum Rent Duration</span>
+              </label>
+              <TimeDurationInput
+                type="text"
+                value={10 * 60 * 1000}
+                className=" flex-auto input input-bordered input-accent w-full "
+                onChange={(value) => setMaxDuration(value / 1000)}
               />
             </div>
             <div className="justify-end card-actions">

@@ -1,4 +1,5 @@
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import { TimeDurationInput } from "react-time-duration-input";
 import {
   useConnection,
   useWallet,
@@ -101,14 +102,15 @@ function Rent() {
       setErr(error.message);
     }
   };
-  const calculateRent = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const calculateRent = async (e: number) => {
     try {
+      console.log(e)
       setBill(0);
-      setTime(parseInt(e.target.value));
+      setTime(e/1000);
       const currentState = await getMetadata(connection, token);
       setBill(
         (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
-          parseInt(e.target.value)
+          (e/1000)
       );
     } catch (error) {
       console.log(error);
@@ -147,9 +149,9 @@ function Rent() {
                 placeholder="Token address"
                 className=" flex-auto input input-bordered input-accent "
               />
-              <input
-                type="number"
-                onChange={(e) => {
+              <TimeDurationInput
+              value = {60*1000}
+                onChange={(e ) => {
                   //setTime(parseInt(e.target.value));
                   calculateRent(e);
                 }}

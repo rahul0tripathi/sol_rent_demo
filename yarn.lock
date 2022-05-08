@@ -10856,7 +10856,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@^15.8.1:
+prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -11151,6 +11151,13 @@ react-scripts@5.0.0:
     workbox-webpack-plugin "^6.4.1"
   optionalDependencies:
     fsevents "^2.3.2"
+
+react-time-duration-input@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-time-duration-input/-/react-time-duration-input-1.1.1.tgz#9dde7fb1d4c1be8772c554942be10e81eb342e30"
+  integrity sha512-a2AYCuJVvFMBZKCkxvZ0UmANqJz77V9bDqnFQVwZclPyAvzgSBaT7WqQoQX7htsUN2q+BZu+zSFAfa5n/xyVZw==
+  dependencies:
+    prop-types "^15.7.2"
 
 react@^18.1.0:
   version "18.1.0"
@@ -12090,10 +12097,10 @@ stream-http@^3.2.0:
     readable-stream "^3.6.0"
     xtend "^4.0.2"
 
-stream-nft-sdk@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/stream-nft-sdk/-/stream-nft-sdk-1.1.5.tgz#4320cd7f7a7fa9b300f0eb953e62cfbbf018e39e"
-  integrity sha512-9JawYNIsroVgSj17nvRe5cIWPZZMbmhYOJKzQ8S+Ovz9QhaderByvY8rfLRyQXkjOClS5qzZzWrG6w22umt6Kg==
+stream-nft-sdk@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/stream-nft-sdk/-/stream-nft-sdk-1.1.6.tgz#7cd6c46df88b194f2a1b74a0616347ad8c58256a"
+  integrity sha512-UNd64CRvNqJ6MQAgkuYpJ+kzkALLJEse6bR9XnAV5JSg0I/sfkwfhpRiKQYt8uFUxY2HqaVgw3TCj1DQozC5gw==
   dependencies:
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.29.1"
