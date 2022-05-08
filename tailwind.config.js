@@ -4,13 +4,7 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    dark: {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      ...require("daisyui/src/colors/themes")["[data-theme=light]"],
-      primary: "blue",
-      "primary-focus": "mediumblue",
-      "base-200":"white"
-    },
+    
 
     extend: {
       fontFamily: {
@@ -25,4 +19,7 @@ module.exports = {
     },
   },
   plugins: [require("daisyui")],
+  daisyui:{
+    themes:['dark']
+  }
 }
