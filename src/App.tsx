@@ -27,6 +27,7 @@ import { clusterApiUrl } from "@solana/web3.js";
 import Rent from "./components/rent";
 import Listing from "./components/listings";
 import Toggle from "./components/borrow";
+import Init from "./components/init";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 function App() {
@@ -74,7 +75,7 @@ function App() {
                 Borrow
               </a>
             </div>
-            {listActive ? <Card /> : <Toggle></Toggle>}
+            {listActive ? <Init /> : <Toggle></Toggle>}
           </div>
         </WalletModalProvider>
       </WalletProvider>

@@ -29,3 +29,6 @@ code {
 .btn {
   @apply rounded-full;
 }
+[data-theme="dark"] .custom-green {
+  background-color: #36d1a5 !important;
+}
