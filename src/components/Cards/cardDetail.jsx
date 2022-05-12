@@ -52,7 +52,7 @@ const cardDetail = ({
             <div className="like-container">
               <button className="like" onClick={like}>
               </button>
-              <p className="like-count">123</p>
+              <p className="like-count">{}</p>
             </div>
           </div>
         </>
