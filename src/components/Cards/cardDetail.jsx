@@ -5,8 +5,10 @@ import Card from "./card";
 
 const cardDetail = ({
   name,
+  status,
   nftName,
   price,
+  buttonValue,
   nftUri,
   likeCount,
   gradient,
@@ -39,21 +41,28 @@ const cardDetail = ({
               <p className="name">{name}</p>
             </div>
 
-            <div className="price-container">
-              <p className="price-label">Price</p>
-              <p className="price">
-                {" "}
-                 4.555
-              </p>
-            </div>
+           
           </div>
-          <div className="buttons">
-             <button className="buy-now">List</button> 
-            <div className="like-container">
-              <button className="like" onClick={like}>
-              </button>
-              <p className="like-count">{}</p>
+
+          <div className="wrapper">
+            <div className="info-container">
+              <p className="owner"> {}</p>
+              <p className="name">{status}</p>
             </div>
+
+            <> {buttonValue? (
+            <div className="buttons">
+            <button className="buy-now" onClick={onClick}>{buttonValue}</button> 
+            </div> ) : (
+            <div className="price-container">
+            <p className="price-label">Price</p>
+            <p className="price">
+              {" "}
+              {price}
+            </p>
+          </div>)
+      }
+          </>
           </div>
         </>
       }
