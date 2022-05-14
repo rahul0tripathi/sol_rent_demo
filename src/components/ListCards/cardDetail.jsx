@@ -55,7 +55,7 @@ const cardDetail = ({
             <button className="buy-now" onClick={onClick}>{buttonValue}</button> 
             </div> ) : (
             <div className="price-container">
-            <p className="price-label">Price</p>
+            <p className="price-label">{price}</p>
             <p className="price">
               {" "}
               {price}

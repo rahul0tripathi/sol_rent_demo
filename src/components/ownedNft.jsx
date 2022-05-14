@@ -516,6 +516,8 @@ function ownedNft() {
           val = { ...val, value: allListings[i].value, buttonValue: allListings[i].buttonValue, id: allListings[i].mint };
           arr.push(val);
         }
+
+        // contains final list with collection name detail
         setListObject(arr);
       } catch (error) {
         console.log(error);
@@ -526,6 +528,7 @@ function ownedNft() {
     setShowLoader(false);
   };
 
+  console.log(listObject)
   useEffect(() => {
     init();
   }, [w]);
