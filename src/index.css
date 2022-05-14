@@ -23,7 +23,6 @@ code {
     monospace;
 }
 #root {
-  background: linear-gradient(-45deg, #eefffe, #effaff, #ddf5ff);
   @apply h-screen;
 }
 .btn {

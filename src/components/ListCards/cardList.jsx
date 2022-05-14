@@ -2,19 +2,20 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import CardDetail from "./cardDetail";
-import Init from "../../components/init";
 import "./styles/CardList.css";
+import CreateListing from "../createListing";
 
-const CardList = ({ list, type = "horizontal" }) => {
+const CardList = ({ list, type = "horizontal"}) => {
 
   const [openList, setOpenList] = useState(true);
   const [listItem, setListItem] = useState({});
   const openlist = (item) => {
-    console.log(list)
     setOpenList(false)
     setListItem(item)
   }
-  console.log(openList)
+  const open = () => {
+    setOpenList(true)
+  }
   return (
     <> {openList?
      (<div
@@ -24,17 +25,17 @@ const CardList = ({ list, type = "horizontal" }) => {
       {list.map((item, index) => (
         <>
           <CardDetail
-            nftUri={item.metadata.data.uri}
-            name={item.metadata.data.name}
+            nftUri={item.data.image}
+            name={item.data.name}
             status={item.listed ? "Listed" : "Owned"}
             buttonValue={item.listed ? null : "List"}
-            price={item.metadata.data.sellerFeeBasisPoints}
+            price={item.data.sellerFeeBasisPoints}
             onClick={()=>openlist(item)}
             key={index}
           />
         </>
       ))}
-    </div> ) :(<Init /> )
+    </div> ) :(<CreateListing id={listItem.id} onClick={open}/> )
 }
     </>
   );

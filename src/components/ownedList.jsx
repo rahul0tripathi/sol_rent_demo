@@ -12,7 +12,8 @@ import {
   getParsedNftAccountsByOwner,
   isValidSolanaAddress,
 } from "@nfteyez/sol-rayz";
-import CardList from "./Cards/cardList";
+import CardList from "./ListCards/cardList";
+
 function OwnedList() {
   const [ids, setids] = useState([]);
   const [show, setShowLoader] = useState(true);
@@ -440,7 +441,7 @@ function OwnedList() {
         >
           <div className="card-body">
             <h2 className="card-title">owned SPL-TOKEN</h2>
-            <CardList list={data} />
+
             {show ? (
               <div className="container mx-auto center">
                 <center>

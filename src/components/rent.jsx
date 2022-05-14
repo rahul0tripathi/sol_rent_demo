@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   useConnection,
   useWallet,
@@ -64,7 +65,7 @@ const cancelRent = async (
   });
   return `withdrawEscrowTx Completed: ${txId}`;
 };
-function Rent() {
+const Rent = ({id}) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
@@ -75,6 +76,7 @@ function Rent() {
   const [time, setTime] = useState(0);
   const [timeScale, setScale] = useState(0);
   const initRent = async () => {
+    setToken(id)
     setErr(null);
     setLog(null);
     try {
@@ -106,6 +108,7 @@ function Rent() {
     try {
       console.log(e.target.value);
       setBill(0);
+      setToken(id)
       setTime(getSeconds(timeScale, e.target.value));
       const currentState = await getMetadata(connection, token);
       setBill(
@@ -119,6 +122,7 @@ function Rent() {
   const cancel = async () => {
     setErr(null);
     setLog(null);
+    setToken(id)
     if (!publicKey) {
       setErr("Wallet not connected");
       return;
@@ -134,6 +138,7 @@ function Rent() {
     }
   };
   useEffect(() => {
+    setToken(id)
     setErr(null);
   }, []);
   return (
@@ -143,12 +148,9 @@ function Rent() {
           <div className="card-body">
             <h2 className="card-title">borrow SPL-TOKEN</h2>
             <div className="flex gap-4">
-              <input
-                type="text"
-                onChange={(e) => setToken(e.target.value)}
-                placeholder="Token address"
-                className=" flex-auto input input-bordered input-accent "
-              />
+            <div> Token Id</div>
+              <div> {id}</div>
+            
               <input
                 type="number"
                 onChange={(e) => {

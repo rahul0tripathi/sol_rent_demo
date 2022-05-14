@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { TimeDurationInput } from "react-time-duration-input";
 
@@ -31,6 +32,7 @@ const getMetadata = async (connection: Connection, token: string) => {
     connection,
   });
 };
+
 const initalizeEscrowHandler = async (
   rate: number,
   connection: Connection,
@@ -86,7 +88,7 @@ const cancelEscrowHandler = async (
   });
   return `cancelEscrowTx Completed: ${txId}`;
 };
-function Card() {
+const  Card = ({id}) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
@@ -103,6 +105,7 @@ function Card() {
     setErr(null);
     setLog(null);
     setEscrowState(null);
+    setToken(id)
     if (!publicKey) {
       setErr("Wallet not connected");
       return;
@@ -132,6 +135,7 @@ function Card() {
     }
   };
   const initalizeEscrow = async () => {
+    setToken(id)
     setErr(null);
     setLog(null);
     setEscrowState(null);
@@ -157,6 +161,7 @@ function Card() {
     }
   };
   const cancelEscrow = async () => {
+    setToken(id)
     setErr(null);
     setLog(null);
     setEscrowState(null);
@@ -179,6 +184,7 @@ function Card() {
     }
   };
   useEffect(() => {
+    setToken(id)
     setErr(null);
   }, []);
   return (
@@ -187,13 +193,9 @@ function Card() {
         <div className="flex-auto card w-32 max-w-32 bg-primary text-primary-content shadow-2xl">
           <div className="card-body">
             <h2 className="card-title">initialize SPL-TOKEN</h2>
-            <div className="flex gap-4 ">
-              <input
-                type="text"
-                onChange={(e) => setToken(e.target.value)}
-                placeholder="Token address"
-                className=" flex-auto input input-bordered input-accent"
-              />
+            <div className="flex gap-4 listing-header">
+            <div> Token Id</div>
+              <div> {id}</div>
             </div>
 
             <div className="form-control flex flex-row gap-4 w-full ">
