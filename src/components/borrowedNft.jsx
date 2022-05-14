@@ -6,7 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
-import { queryTokenState, config } from "stream-nft-sdk";
+import { queryTokenState, config, getAllListedTokens } from "stream-nft-sdk";
 import { deleteListing, fetchListings } from "../services/firebase";
 import { getParsedNftAccountsByOwner } from "@nfteyez/sol-rayz";
 import { programs } from "@metaplex/js";
@@ -36,35 +36,34 @@ function BorrowedNft() {
   const [listObject, setListObject] = useState([]);
 
   const init = async () => {
-    const listings = await fetchListings();
+    const finalList = await fetchListings();
     setids([]);
+    
+    const listings = await await getAllListedTokens({
+      connection,
+      programId: config.DEVNET_PROGRAM_ID,
+    })
 
+    console.log(listings[0].state.tokenPubkey)
     let listArr = [];
     for (let i in listings) {
       try {
         const state = await getMetadata(
           connection,
-          listings[i].token
+          listings[i].state.tokenPubkey
         );
         const dataSolana = await getData(
           connection,
-          listings[i].token
+          listings[i].state.tokenPubkey
         );
         listArr.push(dataSolana);
-        setids((ids) => [...new Set([...ids, listings[i].token])]);
+        setids((ids) => [...new Set([...ids, listings[i].state.tokenPubkey])]);
       } catch (e) {
-        await deleteListing(listings[i].token);
+        await deleteListing(listings[i].state.tokenPubkey);
       }
     }
 
-    /*const dataSolana = await getData(
-      connection,
-      "DaefTQVVdxWzhULTzyZWVof1Twcqy2iMDVwJyWhCohBg"
-    );
-    let listArr = [];
-    console.log(dataSolana)
-    listArr.push(dataSolana);*/
-
+    console.log("value:", listArr)
     try {
       let nftData = listArr;
       var data = Object.keys(nftData).map((key) => nftData[key]);

@@ -27,8 +27,8 @@ const CardList = ({ list, type = "horizontal"}) => {
           <CardDetail
             nftUri={item.data.image}
             name={item.data.name}
-            status={item.listed ? "Listed" : "Owned"}
-            buttonValue={item.listed ? null : "List"}
+            status={item.value}
+            buttonValue={item.buttonValue}
             price={item.data.sellerFeeBasisPoints}
             onClick={()=>openlist(item)}
             key={index}

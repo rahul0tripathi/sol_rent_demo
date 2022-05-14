@@ -6,7 +6,12 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
-import { queryTokenState, config } from "stream-nft-sdk";
+import {
+  queryTokenState,
+  config,
+  getWalletTokens,
+  QueryWalletTokensStatus,
+} from "stream-nft-sdk";
 import { deleteListing, fetchListings } from "../services/firebase";
 import {
   getParsedNftAccountsByOwner,
@@ -14,13 +19,14 @@ import {
 } from "@nfteyez/sol-rayz";
 import CardList from "./ListCards/cardList";
 import axios from "axios";
+import { programs } from "@metaplex/js";
 
 function ownedNft() {
   const [ids, setids] = useState([]);
   const [listObject, setListObject] = useState([]);
 
   const [show, setShowLoader] = useState(true);
-  const [nftList, setNftList] = useState(true)
+  const [nftList, setNftList] = useState(true);
   const { connection } = useConnection();
   const data = [
     {
@@ -426,11 +432,19 @@ function ownedNft() {
       },
     },
   ];
+  const getData = async (connection, token) => {
+    let mintPubkey = new PublicKey(token);
+    const tokenmeta = await programs.metadata.Metadata.findByMint(
+      connection,
+      mintPubkey
+    );
+    return tokenmeta.data;
+  };
   const w = useWallet();
   const { publicKey, sendTransaction, connected } = w;
   const init = async () => {
     if (connected) {
-        setNftList(true)
+      setNftList(true);
       const listings = await getParsedNftAccountsByOwner({
         publicAddress: publicKey.toBase58(),
         connection,
@@ -441,32 +455,75 @@ function ownedNft() {
         for (let i in listings) {
           try {
             // const state = await getMetadata(connection, listings[i].token);
+            listings[i] = {
+              ...listings[i],
+              value: "Owned",
+              buttonValue: "List",
+            };
             setids((ids) => [...new Set([...ids, listings[i].mint])]);
           } catch (e) {
             await deleteListing(listings[i].token);
           }
         }
       }
+
+      const listed = await getWalletTokens({
+        connection,
+        programId: config.DEVNET_PROGRAM_ID,
+        owner: w,
+        type: QueryWalletTokensStatus.LISTED,
+      });
+
+      for (let i in listed) {
+        listed[i] = { ...listed[i], value: "Listed", buttonValue: "" };
+      }
+
+      const borrowed = await getWalletTokens({
+        connection,
+        programId: config.DEVNET_PROGRAM_ID,
+        owner: w,
+        type: QueryWalletTokensStatus.BORROWED,
+      });
+
+      for (let i in borrowed) {
+        borrowed[i] = { ...borrowed[i], value: "Borrowed", buttonValue: "" };
+      }
+
+      var combine = [];
+      combine = combine.concat(listed)
+      combine = combine.concat(borrowed)
+
+      var otherList = [];
+
+      for (let j = 0; j < combine.length; j++) {
+      const dataSolana = await getData(
+        connection,
+        combine[j].state.tokenPubkey
+      );
+      const tempdataSolana = { ...dataSolana, value:combine[j].value, buttonValue: combine[j].buttonValue };
+      otherList.push(tempdataSolana);
+      }
+      const allListings = listings.concat(otherList);
+
       try {
-        let nftData = listings;
+        let nftData = allListings;
         var data = Object.keys(nftData).map((key) => nftData[key]);
         let arr = [];
         let n = data.length;
         for (let i = 0; i < n; i++) {
           let val = await axios.get(data[i].data.uri);
-          val = { ...val, id: listings[i].mint };
+            console.log(allListings[i])
+          val = { ...val, value: allListings[i].value, buttonValue: allListings[i].buttonValue, id: allListings[i].mint };
           arr.push(val);
         }
         setListObject(arr);
       } catch (error) {
         console.log(error);
       }
-    }
-    else{
-        setNftList(false)
+    } else {
+      setNftList(false);
     }
     setShowLoader(false);
-   
   };
 
   useEffect(() => {
@@ -501,13 +558,14 @@ function ownedNft() {
           ""
         )}
 
-        { nftList?
-        (<div>
-          <CardList list={listObject} />
-        </div>) :
-        (<center>
-        <div className="msg"> Connect your wallet to see your NFTs</div>
-        </center>
+        {nftList ? (
+          <div>
+            <CardList list={listObject} />
+          </div>
+        ) : (
+          <center>
+            <div className="msg"> Connect your wallet to see your NFTs</div>
+          </center>
         )}
         {/* 
             <button className="btn" onClick={init}>
