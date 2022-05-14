@@ -12,6 +12,10 @@ const CardList = ({ list, type = "horizontal"}) => {
   const openlist = (item) => {
     setOpenList(false)
     setListItem(item)
+    // Write log for nft withdraw here
+    if(buttonValue === "Withdraw"){
+      console.log(item.id)
+    }
   }
   const open = () => {
     setOpenList(true)
