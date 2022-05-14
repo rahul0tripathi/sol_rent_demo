@@ -88,7 +88,7 @@ const cancelEscrowHandler = async (
   });
   return `cancelEscrowTx Completed: ${txId}`;
 };
-const  Card = ({id}) => {
+const Card = ({ id }) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
@@ -98,6 +98,8 @@ const  Card = ({id}) => {
   const [escrowState, setEscrowState] = useState(null);
   const [rate, setRate] = useState(0);
   const [timeScale, setTimeScale] = useState(0);
+  const [timeScaleMinBorrow, setTimeScaleMinBorrow] = useState(0);
+  const [timeScaleMaxBorrow, setTimeScaleMaxBorrow] = useState(0);
   const [minDuration, setMinDuration] = useState(60);
   const [maxDuration, setMaxDuration] = useState(10 * 60);
 
@@ -105,7 +107,7 @@ const  Card = ({id}) => {
     setErr(null);
     setLog(null);
     setEscrowState(null);
-    setToken(id)
+    setToken(id);
     if (!publicKey) {
       setErr("Wallet not connected");
       return;
@@ -135,7 +137,7 @@ const  Card = ({id}) => {
     }
   };
   const initalizeEscrow = async () => {
-    setToken(id)
+    setToken(id);
     setErr(null);
     setLog(null);
     setEscrowState(null);
@@ -151,8 +153,8 @@ const  Card = ({id}) => {
         connection,
         new PublicKey(token),
         w,
-        getSeconds(timeScale, minDuration),
-        getSeconds(timeScale, maxDuration)
+        getSeconds(timeScaleMinBorrow, minDuration),
+        getSeconds(timeScaleMaxBorrow, maxDuration)
       );
       setLog(resp);
     } catch (error) {
@@ -161,7 +163,7 @@ const  Card = ({id}) => {
     }
   };
   const cancelEscrow = async () => {
-    setToken(id)
+    setToken(id);
     setErr(null);
     setLog(null);
     setEscrowState(null);
@@ -184,7 +186,7 @@ const  Card = ({id}) => {
     }
   };
   useEffect(() => {
-    setToken(id)
+    setToken(id);
     setErr(null);
   }, []);
   return (
@@ -194,7 +196,7 @@ const  Card = ({id}) => {
           <div className="card-body">
             <h2 className="card-title">initialize SPL-TOKEN</h2>
             <div className="flex gap-4 listing-header">
-            <div> Token Id</div>
+              <div> Token Id</div>
               <div> {id}</div>
             </div>
 
@@ -205,13 +207,48 @@ const  Card = ({id}) => {
                 className=" flex-auto input input-bordered input-accent "
                 onChange={(e) => setRate(parseFloat(e.target.value))}
               />
-
+              <label className="label">
+                <span className="label-text">Unit</span>
+              </label>
+              <select
+                className="select select-info  "
+                onChange={(e) => {
+                  setTimeScale(parseInt(e.target.value));
+                }}
+              >
+                <option value={0}>Seconds</option>
+                <option value={1} defaultValue={true}>
+                  Minutes
+                </option>
+                <option value={2}>Hours</option>
+                <option value={3}>Days</option>
+                <option value={4}>Weeks</option>
+                <option value={5}>Months</option>
+              </select>
               <input
                 type="number"
                 placeholder="Minimum Rent Duration"
                 className=" flex-auto input input-bordered input-accent w-full "
                 onChange={(e) => setMinDuration(parseInt(e.target.value))}
               />
+              <label className="label">
+                <span className="label-text">Unit</span>
+              </label>
+              <select
+                className="select select-info  "
+                onChange={(e) => {
+                  setTimeScaleMinBorrow(parseInt(e.target.value));
+                }}
+              >
+                <option value={0}>Seconds</option>
+                <option value={1} defaultValue={true}>
+                  Minutes
+                </option>
+                <option value={2}>Hours</option>
+                <option value={3}>Days</option>
+                <option value={4}>Weeks</option>
+                <option value={5}>Months</option>
+              </select>
               <input
                 type="number"
                 placeholder="Maximum Rent Duration"
@@ -224,7 +261,7 @@ const  Card = ({id}) => {
               <select
                 className="select select-info  "
                 onChange={(e) => {
-                  setTimeScale(parseInt(e.target.value));
+                  setTimeScaleMaxBorrow(parseInt(e.target.value));
                 }}
               >
                 <option value={0}>Seconds</option>
@@ -313,6 +350,6 @@ const  Card = ({id}) => {
       )}
     </div>
   );
-}
+};
 
 export default Card;
