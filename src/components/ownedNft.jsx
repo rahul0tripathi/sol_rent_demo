@@ -475,7 +475,7 @@ function ownedNft() {
       });
 
       for (let i in listed) {
-        listed[i] = { ...listed[i], value: "Listed", buttonValue: "" };
+        listed[i] = { ...listed[i], value: "Listed", buttonValue: "Withdraw" };
       }
 
       const borrowed = await getWalletTokens({
@@ -512,7 +512,6 @@ function ownedNft() {
         let n = data.length;
         for (let i = 0; i < n; i++) {
           let val = await axios.get(data[i].data.uri);
-            console.log(allListings[i])
           val = { ...val, value: allListings[i].value, buttonValue: allListings[i].buttonValue, id: allListings[i].mint };
           arr.push(val);
         }
@@ -528,7 +527,6 @@ function ownedNft() {
     setShowLoader(false);
   };
 
-  console.log(listObject)
   useEffect(() => {
     init();
   }, [w]);
