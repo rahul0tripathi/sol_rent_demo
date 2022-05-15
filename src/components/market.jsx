@@ -30,7 +30,7 @@ const getData = async (connection, token) => {
   );
   return tokenmeta.data;
 };
-function BorrowedNft() {
+function Marketplace() {
   const { connection } = useConnection();
   const [ids, setids] = useState([]);
   const [show, setShowLoader] = useState(true);
@@ -54,12 +54,12 @@ function BorrowedNft() {
           listings[i].state.tokenPubkey
         );
         console.log(state.getState().state.toNumber());
-        if (state.getState().state.toNumber() === 1) {
+        if (state.getState().state.toNumber() === 0) {
           const dataSolana = await getData(
             connection,
             listings[i].state.tokenPubkey
           );
-          listArr.push({ listed: true, ...dataSolana });
+          listArr.push(dataSolana);
           setids((ids) => [
             ...new Set([...ids, listings[i].state.tokenPubkey]),
           ]);
@@ -73,13 +73,21 @@ function BorrowedNft() {
     try {
       let nftData = listArr;
       var data = Object.keys(nftData).map((key) => nftData[key]);
-      let arr = [];
+
+      let arr = {};
       let n = data.length;
       for (let i = 0; i < n; i++) {
         let val = await axios.get(data[i].data.uri);
-        val = { ...val, id: listArr[i].mint };
-        arr.push({ listed: true, ...val });
+        console.log(val);
+        val = {
+          ...val,
+          id: listArr[i].mint,
+        };
+        arr[val.data.collection.name] = arr[val.data.collection.name]
+          ? [...arr[val.data.collection.name], val]
+          : [val];
       }
+      // contains final list with collection name detail
       console.log(arr);
       setListObject(arr);
     } catch (error) {
@@ -118,7 +126,16 @@ function BorrowedNft() {
           ""
         )}
         <div>
-          <CardList list={listObject} />
+          {Object.keys(listObject).map((k) => {
+            return (
+              <div key={k}>
+                <center>
+                  <h1>{k}</h1>
+                </center>
+                <CardList list={listObject[k]} />
+              </div>
+            );
+          })}
         </div>
         {/* 
             <button className="btn" onClick={init}>
@@ -129,4 +146,4 @@ function BorrowedNft() {
   );
 }
 
-export default BorrowedNft;
+export default Marketplace;

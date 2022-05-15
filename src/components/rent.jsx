@@ -1,10 +1,16 @@
 /* eslint-disable react/prop-types */
+import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   useConnection,
   useWallet,
   WalletContextState,
 } from "@solana/wallet-adapter-react";
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import {
+  Connection,
+  PublicKey,
+  LAMPORTS_PER_SOL,
+  Keypair,
+} from "@solana/web3.js";
 import { BN } from "bn.js";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,6 +19,7 @@ import {
   sendTransaction,
   withdrawTx,
   rentTx,
+  KeyPairWallet,
 } from "stream-nft-sdk";
 import { getSeconds } from "../services/common";
 const getMetadata = async (connection: Connection, token: string) => {
@@ -51,21 +58,77 @@ const cancelRent = async (
   token: PublicKey,
   wallet: WalletContextState
 ) => {
-  const resp = await withdrawTx({
-    token,
-    programId: config.DEVNET_PROGRAM_ID,
-    connection,
-  });
-  const txId = await sendTransaction({
-    connection,
-    wallet,
-    txs: resp.tx,
-    signers: [],
-    options: { skipPreflight: false, preflightCommitment: "confirmed" },
-  });
-  return `withdrawEscrowTx Completed: ${txId}`;
+  const aliceKeyPair = Keypair.fromSecretKey(
+    Uint8Array.from([
+      195, 191, 15, 17, 39, 92, 168, 10, 175, 227, 147, 88, 14, 192, 77, 136,
+      102, 19, 132, 142, 77, 98, 252, 183, 252, 102, 196, 54, 249, 169, 74, 202,
+      97, 65, 119, 17, 170, 211, 184, 3, 4, 229, 79, 30, 245, 219, 131, 191,
+      241, 173, 133, 144, 78, 108, 6, 10, 84, 173, 212, 220, 61, 82, 87, 248,
+    ])
+  );
+  //  const
+  //const wallet = new KeyPairWallet(aliceKeyPair);
+  try {
+    const xToken = new Token(
+      connection,
+      new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
+      TOKEN_PROGRAM_ID,
+      aliceKeyPair
+    );
+
+    const currentState = await getMetadata(connection, token);
+    const associatedOwnersTokenAddress = await (
+      await xToken.getOrCreateAssociatedAccountInfo(
+        new PublicKey(currentState.getState().initializerPubkey)
+      )
+    ).address;
+    const associatedBorrowerTokenAddress = await (
+      await xToken.getOrCreateAssociatedAccountInfo(
+        new PublicKey(currentState.getState().borrower)
+      )
+    ).address;
+
+    // const associatedPdaTokenAddress = await (
+    //   await Token.getAssociatedTokenAddress(currentState.getPda())
+    // ).address;
+    console.log( currentState.getPda().toBase58())
+    const associatedPdaTokenAddress = await connection.getTokenAccountsByOwner(
+      currentState.getPda(),
+      {
+        mint: new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
+      }
+    );
+    console.log("here");
+    console.log(
+      associatedOwnersTokenAddress,
+      associatedBorrowerTokenAddress,
+      associatedPdaTokenAddress
+    );
+
+    const resp = await withdrawTx({
+      token,
+      withdrawer: wallet,
+      // adding a single spl token associated pda to share revenue on
+      associatedPdaTokenAddress:associatedPdaTokenAddress.value[0].pubkey,
+      associatedBorrowerTokenAddress,
+      associatedOwnersTokenAddress,
+      programId: config.DEVNET_PROGRAM_ID,
+      connection,
+    });
+    const txId = await sendTransaction({
+      connection,
+      wallet,
+      txs: resp.tx,
+      signers: [],
+      options: { skipPreflight: false, preflightCommitment: "confirmed" },
+    });
+
+    return `withdrawEscrowTx Completed: ${txId}`;
+  } catch (err) {
+    console.log("err", err);
+  }
 };
-const Rent = ({id}) => {
+const Rent = ({ id }) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
@@ -75,8 +138,10 @@ const Rent = ({id}) => {
   const [bill, setBill] = useState(0);
   const [time, setTime] = useState(0);
   const [timeScale, setScale] = useState(0);
+  const [maxMinConstraint, setMaxMinConstraint] = useState("");
+  const [rate, setRate] = useState(0);
   const initRent = async () => {
-    setToken(id)
+    setToken(id);
     setErr(null);
     setLog(null);
     try {
@@ -108,7 +173,7 @@ const Rent = ({id}) => {
     try {
       console.log(e.target.value);
       setBill(0);
-      setToken(id)
+      setToken(id);
       setTime(getSeconds(timeScale, e.target.value));
       const currentState = await getMetadata(connection, token);
       setBill(
@@ -122,7 +187,7 @@ const Rent = ({id}) => {
   const cancel = async () => {
     setErr(null);
     setLog(null);
-    setToken(id)
+    setToken(id);
     if (!publicKey) {
       setErr("Wallet not connected");
       return;
@@ -137,8 +202,20 @@ const Rent = ({id}) => {
       setErr(error.message);
     }
   };
+  const setConstraints = async (id) => {
+    const currentState = await getMetadata(connection, id);
+    setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
+    setMaxMinConstraint(
+      `${currentState
+        .getState()
+        .minBorrowDuration.toNumber()} s - ${currentState
+        .getState()
+        .maxBorrowDuration.toNumber()} s`
+    );
+  };
   useEffect(() => {
-    setToken(id)
+    setToken(id);
+    setConstraints(id);
     setErr(null);
   }, []);
   return (
@@ -148,9 +225,15 @@ const Rent = ({id}) => {
           <div className="card-body">
             <h2 className="card-title">borrow SPL-TOKEN</h2>
             <div className="flex gap-4">
-            <div> Token Id</div>
+              <div> Token Id</div>
               <div> {id}</div>
-            
+
+              <div>Duration</div>
+              <div> {maxMinConstraint}</div>
+
+              <div>Rate</div>
+              <div> {rate} SOL/s</div>
+
               <input
                 type="number"
                 onChange={(e) => {
@@ -236,6 +319,6 @@ const Rent = ({id}) => {
       )}
     </div>
   );
-}
+};
 
 export default Rent;

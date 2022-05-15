@@ -39,9 +39,10 @@ const initalizeEscrowHandler = async (
   token: PublicKey,
   wallet: WalletContextState,
   minBorrowTime: number,
-  maxBorrowTime: number
+  maxBorrowTime: number,
+  revenueShare: number
 ) => {
-  console.log(minBorrowTime, maxBorrowTime, rate);
+  //console.log(minBorrowTime, maxBorrowTime, rate, revenueShare);
   const tempAccount = new Keypair();
   const resp = await initNFTEscrowTx({
     owner: wallet,
@@ -49,6 +50,7 @@ const initalizeEscrowHandler = async (
     rate: new BN(rate * LAMPORTS_PER_SOL),
     minBorrowTime: new BN(minBorrowTime),
     maxBorrowTime: new BN(maxBorrowTime),
+    ownersRevenueShare: new BN(revenueShare),
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -102,6 +104,7 @@ const Card = ({ id }) => {
   const [timeScaleMaxBorrow, setTimeScaleMaxBorrow] = useState(0);
   const [minDuration, setMinDuration] = useState(60);
   const [maxDuration, setMaxDuration] = useState(10 * 60);
+  const [revenueShare, setRevenueShare] = useState(0);
 
   const fetchMetadata = async () => {
     setErr(null);
@@ -154,7 +157,8 @@ const Card = ({ id }) => {
         new PublicKey(token),
         w,
         getSeconds(timeScaleMinBorrow, minDuration),
-        getSeconds(timeScaleMaxBorrow, maxDuration)
+        getSeconds(timeScaleMaxBorrow, maxDuration),
+        revenueShare
       );
       setLog(resp);
     } catch (error) {
@@ -273,6 +277,12 @@ const Card = ({ id }) => {
                 <option value={4}>Weeks</option>
                 <option value={5}>Months</option>
               </select>
+              <input
+                type="number"
+                placeholder="Revenue share (0-100)"
+                className=" flex-auto input input-bordered input-accent w-full "
+                onChange={(e) => setRevenueShare(parseInt(e.target.value))}
+              />
             </div>
             <div className="justify-end card-actions">
               <button className="btn" onClick={initalizeEscrow}>

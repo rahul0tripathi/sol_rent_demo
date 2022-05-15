@@ -28,410 +28,7 @@ function ownedNft() {
   const [show, setShowLoader] = useState(true);
   const [nftList, setNftList] = useState(true);
   const { connection } = useConnection();
-  const data = [
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: false,
-      listing: null,
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: true,
-      listing: {
-        isInitialized: true,
-        initializerPubkey: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        initializerTempTokenAccountPubkey:
-          "125gaQfDK2L9YxT7yNfJQv32muu5Qg2FhUCXVaA1qGkB",
-        initializerReceivingTokenAccountPubkey:
-          "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        tokenPubkey: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        rate: "0.1 SOL",
-        expiry: "0",
-        borrower: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        state: "0",
-        minBorrowDuration: "10",
-        maxBorrowDuration: "20",
-      },
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: true,
-      listing: {
-        isInitialized: true,
-        initializerPubkey: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        initializerTempTokenAccountPubkey:
-          "125gaQfDK2L9YxT7yNfJQv32muu5Qg2FhUCXVaA1qGkB",
-        initializerReceivingTokenAccountPubkey:
-          "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        tokenPubkey: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        rate: "0.1 SOL",
-        expiry: "0",
-        borrower: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        state: "0",
-        minBorrowDuration: "10",
-        maxBorrowDuration: "20",
-      },
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-    {
-      listed: true,
-      listing: {
-        isInitialized: true,
-        initializerPubkey: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        initializerTempTokenAccountPubkey:
-          "125gaQfDK2L9YxT7yNfJQv32muu5Qg2FhUCXVaA1qGkB",
-        initializerReceivingTokenAccountPubkey:
-          "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        tokenPubkey: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        rate: "0.1 SOL",
-        expiry: "0",
-        borrower: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        state: "0",
-        minBorrowDuration: "10",
-        maxBorrowDuration: "20",
-      },
-      metadata: {
-        key: 4,
-        updateAuthority: "7YeSmq9njjsyr4Axb1LDzdooUaVJThXdgHE4Z6Gpaa3h",
-        mint: "EPNCTFGQgNwuwyvABSxvTD2SsKFvB5phtkS1ATkXEZyU",
-        data: {
-          name: "Number #0001",
-          symbol: "NB",
-          uri: "https://arweave.net/vj88qCRUsQOhkpbf4UFEy4PE5l4RpjJInm6xopFXOAE?ext=png",
-          sellerFeeBasisPoints: 500,
-          creators: [
-            {
-              address: "HakaQEauRmZQbVU3wg7hmT1318UTR8YopTSuWAbj3b1g",
-              verified: 1,
-              share: 0,
-            },
-            {
-              address: "N4f6zftYsuu4yT7icsjLwh4i6pB1zvvKbseHj2NmSQw",
-              verified: 0,
-              share: 100,
-            },
-          ],
-        },
-        primarySaleHappened: 1,
-        isMutable: 1,
-        editionNonce: null,
-      },
-    },
-  ];
+
   const getData = async (connection, token) => {
     let mintPubkey = new PublicKey(token);
     const tokenmeta = await programs.metadata.Metadata.findByMint(
@@ -475,7 +72,7 @@ function ownedNft() {
       });
 
       for (let i in listed) {
-        listed[i] = { ...listed[i], value: "Listed", buttonValue: "Withdraw" };
+        listed[i] = { ...listed[i], value: "Listed", buttonValue: "Options" };
       }
 
       const borrowed = await getWalletTokens({
@@ -490,33 +87,45 @@ function ownedNft() {
       }
 
       var combine = [];
-      combine = combine.concat(listed)
-      combine = combine.concat(borrowed)
+      combine = combine.concat(listed);
+      combine = combine.concat(borrowed);
 
       var otherList = [];
 
       for (let j = 0; j < combine.length; j++) {
-      const dataSolana = await getData(
-        connection,
-        combine[j].state.tokenPubkey
-      );
-      const tempdataSolana = { ...dataSolana, value:combine[j].value, buttonValue: combine[j].buttonValue };
-      otherList.push(tempdataSolana);
+        const dataSolana = await getData(
+          connection,
+          combine[j].state.tokenPubkey
+        );
+        const tempdataSolana = {
+          ...dataSolana,
+          value: combine[j].value,
+          buttonValue: combine[j].buttonValue,
+        };
+        otherList.push(tempdataSolana);
       }
       const allListings = listings.concat(otherList);
 
       try {
         let nftData = allListings;
         var data = Object.keys(nftData).map((key) => nftData[key]);
-        let arr = [];
+        let arr = {};
         let n = data.length;
         for (let i = 0; i < n; i++) {
           let val = await axios.get(data[i].data.uri);
-          val = { ...val, value: allListings[i].value, buttonValue: allListings[i].buttonValue, id: allListings[i].mint };
-          arr.push(val);
+          console.log(val);
+          val = {
+            ...val,
+            value: allListings[i].value,
+            buttonValue: allListings[i].buttonValue,
+            id: allListings[i].mint,
+          };
+          arr[val.data.collection.name] = arr[val.data.collection.name]
+            ? [...arr[val.data.collection.name], val]
+            : [val];
         }
-
         // contains final list with collection name detail
+        console.log(arr);
         setListObject(arr);
       } catch (error) {
         console.log(error);
@@ -560,9 +169,14 @@ function ownedNft() {
         )}
 
         {nftList ? (
-          <div>
-            <CardList list={listObject} />
-          </div>
+          Object.keys(listObject).map((k) => {
+            return (
+              <div key={k}>
+                <center><h1>{k}</h1></center>
+                <CardList list={listObject[k]} />
+              </div>
+            );
+          })
         ) : (
           <center>
             <div className="msg"> Connect your wallet to see your NFTs</div>

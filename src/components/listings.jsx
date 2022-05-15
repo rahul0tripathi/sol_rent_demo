@@ -25,6 +25,7 @@ function Listing() {
     for (let i in listings) {
       try {
         const state = await getMetadata(connection, listings[i].token);
+        console.log(state)
         setids((ids) => [...new Set([...ids, listings[i].token])]);
       } catch (e) {
         await deleteListing(listings[i].token);
