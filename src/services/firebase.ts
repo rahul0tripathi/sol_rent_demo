@@ -26,38 +26,38 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
 export interface listings {
   token: string;
   at: number;
 }
 export const fetchListings = async () => {
   const listings: listings[] = [];
-  const snapshot = await getDocs(collection(db, "listings"));
-  snapshot.forEach((doc) => {
-    listings.push(doc.data() as listings);
-  });
+  // const snapshot = await getDocs(collection(db, "listings"));
+  // snapshot.forEach((doc) => {
+  //   listings.push(doc.data() as listings);
+  // });
   return listings;
 };
 
 export const deleteListing = async (token: string) => {
-  const q = await query(
-    collection(db, "listings"),
-    where("token", "==", token)
-  );
-  const snapshot = await getDocs(q);
-  snapshot.docs.forEach((doc) => {
-    deleteDoc(doc.ref);
-  });
+  // const q = await query(
+  //   collection(db, "listings"),
+  //   where("token", "==", token)
+  // );
+  // const snapshot = await getDocs(q);
+  // snapshot.docs.forEach((doc) => {
+  //   deleteDoc(doc.ref);
+  // });
 };
 
 export const addDocument = async (token: string) => {
-    const docRef = doc(collection(db, "listings"), token);
-    const docx = await getDoc(docRef);
-    //console.log(docx.exists())
-    if (docx.exists()) {
-        return;
-    }
-    await setDoc(docRef, { token, at: Date.now() });
+    // const docRef = doc(collection(db, "listings"), token);
+    // const docx = await getDoc(docRef);
+    // //console.log(docx.exists())
+    // if (docx.exists()) {
+    //     return;
+    // }
+    // await setDoc(docRef, { token, at: Date.now() });
 }
